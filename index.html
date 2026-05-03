@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>মেরিট কেয়ার কিন্ডার গার্টেন স্কুল - স্টক ম্যানেজমেন্ট</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hind Siliguri',sans-serif;background:#f0f4f8;min-height:100vh}
+a{text-decoration:none}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#1a7a1a,#2ecc40);color:#fff;padding:0}
+.hdr-top{display:flex;align-items:center;gap:12px;padding:12px 16px}
+.logo-circle{width:54px;height:54px;border-radius:50%;background:#fff;border:2px solid #f9e900;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.logo-circle img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.hdr-text h1{font-size:15px;font-weight:700;line-height:1.3}
+.hdr-text p{font-size:11px;opacity:.85;margin-top:2px}
+.hdr-user{margin-left:auto;font-size:12px;opacity:.9;text-align:right}
+.hdr-user span{display:block;font-weight:600}
+
+/* LOGIN */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background:linear-gradient(160deg,#e8f5e9,#c8e6c9)}
+.login-card{background:#fff;border-radius:16px;padding:28px 24px;width:100%;max-width:360px;box-shadow:0 4px 24px rgba(0,0,0,.12)}
+.login-logo{text-align:center;margin-bottom:20px}
+.login-logo img{width:80px;height:80px;border-radius:50%;border:3px solid #2ecc40}
+.login-logo h2{font-size:16px;font-weight:700;color:#1a7a1a;margin-top:10px}
+.login-logo p{font-size:12px;color:#666;margin-top:3px}
+.frm-lbl{font-size:13px;color:#555;margin-bottom:5px;display:block}
+.frm-inp{width:100%;padding:10px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit;margin-bottom:14px}
+.frm-inp:focus{outline:none;border-color:#2ecc40}
+.btn-login{width:100%;padding:12px;background:#1a7a1a;color:#fff;border:none;border-radius:8px;font-size:15px;font-family:inherit;font-weight:600;cursor:pointer}
+.btn-login:active{opacity:.85}
+.login-err{color:#c0392b;font-size:13px;text-align:center;margin-top:8px;display:none}
+
+/* MAIN APP */
+.app{display:none}
+
+/* TABS */
+.tabs{display:flex;background:#fff;border-bottom:2px solid #e0e0e0;position:sticky;top:0;z-index:10}
+.tab{flex:1;padding:10px 4px;font-size:12px;text-align:center;cursor:pointer;background:none;border:none;color:#777;border-bottom:3px solid transparent;margin-bottom:-2px;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tab svg{width:18px;height:18px}
+.tab.active{color:#1a7a1a;border-bottom-color:#1a7a1a;font-weight:600}
+
+/* PANES */
+.pane{display:none;padding:14px;padding-bottom:70px}
+.pane.active{display:block}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.stat{background:#fff;border-radius:10px;padding:10px 8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.stat-val{font-size:22px;font-weight:700}
+.stat-lbl{font-size:10px;color:#888;margin-top:2px}
+.c-green{color:#1a7a1a}
+.c-amber{color:#e67e22}
+.c-red{color:#c0392b}
+
+/* SEARCH */
+.search-bar{display:flex;gap:8px;margin-bottom:12px}
+.search-bar input{flex:1;padding:9px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:13px;font-family:inherit}
+.search-bar input:focus{outline:none;border-color:#2ecc40}
+
+/* ITEM CARDS */
+.item-card{background:#fff;border-radius:10px;padding:12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);display:flex;align-items:center;gap:12px}
+.item-icon{width:40px;height:40px;border-radius:8px;background:#e8f5e9;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.item-icon svg{width:22px;height:22px;fill:#1a7a1a}
+.item-info{flex:1;min-width:0}
+.item-name{font-size:14px;font-weight:600;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-sub{font-size:12px;color:#888;margin-top:2px}
+.item-qty{text-align:right;flex-shrink:0}
+.qty-num{font-size:18px;font-weight:700}
+.qty-unit{font-size:11px;color:#888}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;margin-top:3px}
+.b-ok{background:#e8f5e9;color:#1a7a1a}
+.b-low{background:#fff3e0;color:#e67e22}
+.b-out{background:#fdecea;color:#c0392b}
+.item-actions{display:flex;gap:6px;margin-top:8px}
+.act-btn{flex:1;padding:6px;border:none;border-radius:6px;font-size:12px;font-family:inherit;font-weight:600;cursor:pointer}
+.act-in{background:#e8f5e9;color:#1a7a1a}
+.act-out{background:#fdecea;color:#c0392b}
+.act-del{background:#f5f5f5;color:#888;flex:0;padding:6px 10px}
+
+/* FORM */
+.form-section{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.form-section h3{font-size:14px;font-weight:600;color:#1a7a1a;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #e8f5e9}
+.f-row{margin-bottom:10px}
+.f-row label{font-size:12px;color:#666;display:block;margin-bottom:4px}
+.f-row input,.f-row select{width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:14px;font-family:inherit}
+.f-row input:focus,.f-row select:focus{outline:none;border-color:#2ecc40}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn-submit{width:100%;padding:12px;border:none;border-radius:8px;font-size:15px;font-family:inherit;font-weight:700;cursor:pointer;margin-top:4px}
+.btn-green{background:#1a7a1a;color:#fff}
+.btn-red{background:#c0392b;color:#fff}
+.btn-submit:active{opacity:.85}
+.form-msg{text-align:center;font-size:13px;margin-top:8px;font-weight:500;min-height:20px}
+
+/* HISTORY */
+.hist-item{background:#fff;border-radius:10px;padding:12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.hi-row{display:flex;justify-content:space-between;align-items:flex-start}
+.hi-name{font-size:14px;font-weight:600;color:#222}
+.hi-badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:10px}
+.hi-in{background:#e8f5e9;color:#1a7a1a}
+.hi-out{background:#fdecea;color:#c0392b}
+.hi-meta{font-size:11px;color:#999;margin-top:4px}
+.hi-note{font-size:12px;color:#555;margin-top:3px;font-style:italic}
+
+/* LOADER */
+.loader{text-align:center;padding:40px;color:#999;font-size:14px}
+.spinner{width:32px;height:32px;border:3px solid #e0e0e0;border-top-color:#1a7a1a;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* EMPTY */
+.empty{text-align:center;padding:32px 16px;color:#bbb}
+.empty svg{width:48px;height:48px;fill:#e0e0e0;margin-bottom:12px}
+.empty p{font-size:13px}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:480px}
+.modal h3{font-size:15px;font-weight:700;color:#1a7a1a;margin-bottom:14px}
+.modal-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:#888;margin-top:-4px}
+
+/* LOGOUT BTN */
+.logout-btn{background:none;border:1px solid rgba(255,255,255,.5);color:#fff;padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit}
+
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.85);z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.loading-overlay p{color:#1a7a1a;font-size:14px;font-weight:600}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="spinner"></div>
+  <p>লোড হচ্ছে...</p>
+</div>
+
+<!-- LOGIN PAGE -->
+<div class="login-wrap" id="login-page" style="display:none">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="https://i.imgur.com/placeholder.png" id="login-logo-img" alt="লোগো" onerror="this.style.display='none'">
+      <h2>মেরিট কেয়ার কিন্ডার গার্টেন স্কুল</h2>
+      <p>হাবিবপুর, বিরামপুর, দিনাজপুর</p>
+    </div>
+    <label class="frm-lbl">ব্যবহারকারীর নাম</label>
+    <input class="frm-inp" type="text" id="login-user" placeholder="username">
+    <label class="frm-lbl">পাসওয়ার্ড</label>
+    <input class="frm-inp" type="password" id="login-pass" placeholder="••••••">
+    <button class="btn-login" onclick="doLogin()">লগইন করুন</button>
+    <div class="login-err" id="login-err">ভুল তথ্য! আবার চেষ্টা করুন।</div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app" id="main-app">
+  <!-- Header -->
+  <div class="hdr">
+    <div class="hdr-top">
+      <div class="logo-circle">
+        <img src="" id="app-logo" alt="লোগো" onerror="this.style.background='#1a7a1a'">
+      </div>
+      <div class="hdr-text">
+        <h1>মেরিট কেয়ার কিন্ডার গার্টেন</h1>
+        <p>স্টক ম্যানেজমেন্ট সিস্টেম</p>
+      </div>
+      <div class="hdr-user">
+        <span id="user-label">Admin</span>
+        <button class="logout-btn" onclick="doLogout()">লগআউট</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('stock',this)">
+      <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v9a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zM16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+      স্টক তালিকা
+    </button>
+    <button class="tab" onclick="switchTab('add',this)">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      যোগ / বিয়োগ
+    </button>
+    <button class="tab" onclick="switchTab('history',this)">
+      <svg viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      ইতিহাস
+    </button>
+    <button class="tab" id="admin-tab" onclick="switchTab('settings',this)" style="display:none">
+      <svg viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+      সেটিংস
+    </button>
+  </div>
+
+  <!-- STOCK TAB -->
+  <div class="pane active" id="pane-stock">
+    <div class="stat-grid">
+      <div class="stat"><div class="stat-val c-green" id="s-total">0</div><div class="stat-lbl">মোট আইটেম</div></div>
+      <div class="stat"><div class="stat-val c-amber" id="s-low">0</div><div class="stat-lbl">কম স্টক</div></div>
+      <div class="stat"><div class="stat-val c-red" id="s-out">0</div><div class="stat-lbl">শেষ</div></div>
+    </div>
+    <div class="search-bar">
+      <input type="text" id="search-inp" placeholder="আইটেম খুঁজুন..." oninput="renderStock()">
+    </div>
+    <div id="stock-list"><div class="loader"><div class="spinner"></div>লোড হচ্ছে...</div></div>
+  </div>
+
+  <!-- ADD/OUT TAB -->
+  <div class="pane" id="pane-add">
+    <div class="form-section">
+      <h3>📦 স্টক যোগ / বিয়োগ করুন</h3>
+      <div class="f-row">
+        <label>আইটেম নির্বাচন করুন</label>
+        <select id="sel-item" onchange="onItemSelect()">
+          <option value="">-- নির্বাচন করুন --</option>
+          <option value="__new__">+ নতুন আইটেম তৈরি করুন</option>
+        </select>
+      </div>
+      <div id="new-name-row" style="display:none" class="f-row">
+        <label>নতুন আইটেমের নাম</label>
+        <input type="text" id="new-name" placeholder="যেমন: খাতা, কলম, ডাস্টার">
+      </div>
+      <div class="g2">
+        <div class="f-row">
+          <label>পরিমাণ</label>
+          <input type="number" id="txn-qty" min="1" placeholder="0">
+        </div>
+        <div class="f-row">
+          <label>একক</label>
+          <select id="txn-unit">
+            <option>পিস</option><option>বক্স</option><option>প্যাকেট</option>
+            <option>রিম</option><option>বোতল</option><option>কেজি</option>
+            <option>লিটার</option><option>ডজন</option><option>সেট</option>
+          </select>
+        </div>
+      </div>
+      <div class="f-row">
+        <label>ন্যূনতম স্টক সতর্কতা</label>
+        <input type="number" id="txn-min" min="0" value="5" placeholder="5">
+      </div>
+      <div class="f-row">
+        <label>নোট (ঐচ্ছিক)</label>
+        <input type="text" id="txn-note" placeholder="কারণ বা মন্তব্য">
+      </div>
+      <div class="g2">
+        <button class="btn-submit btn-green" onclick="doTxn('in')">+ স্টক যোগ</button>
+        <button class="btn-submit btn-red" onclick="doTxn('out')">− স্টক বিয়োগ</button>
+      </div>
+      <div class="form-msg" id="txn-msg"></div>
+    </div>
+  </div>
+
+  <!-- HISTORY TAB -->
+  <div class="pane" id="pane-history">
+    <div id="history-list"><div class="loader"><div class="spinner"></div>লোড হচ্ছে...</div></div>
+  </div>
+
+  <!-- SETTINGS TAB (Admin only) -->
+  <div class="pane" id="pane-settings">
+    <div class="form-section">
+      <h3>⚙️ অ্যাডমিন সেটিংস</h3>
+      <p style="font-size:13px;color:#666;margin-bottom:14px">নতুন ব্যবহারকারী যোগ করুন</p>
+      <div class="f-row"><label>ব্যবহারকারীর নাম</label><input type="text" id="new-user-name" placeholder="username"></div>
+      <div class="f-row"><label>পাসওয়ার্ড</label><input type="password" id="new-user-pass" placeholder="password"></div>
+      <div class="f-row">
+        <label>ভূমিকা</label>
+        <select id="new-user-role">
+          <option value="user">সাধারণ ব্যবহারকারী (দেখতে ও যোগ/বিয়োগ করতে পারবে)</option>
+          <option value="admin">অ্যাডমিন (সব কিছু)</option>
+        </select>
+      </div>
+      <button class="btn-submit btn-green" onclick="addUser()">ব্যবহারকারী যোগ করুন</button>
+      <div class="form-msg" id="user-msg"></div>
+    </div>
+    <div class="form-section" id="user-list-section">
+      <h3>👥 ব্যবহারকারী তালিকা</h3>
+      <div id="user-list-content"><div class="loader"><div class="spinner"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- QUICK TXN MODAL -->
+<div class="modal-bg" id="quick-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3 id="modal-title">দ্রুত যোগ/বিয়োগ</h3>
+    <div class="f-row"><label>পরিমাণ</label><input type="number" id="m-qty" min="1" placeholder="0" style="font-size:18px"></div>
+    <div class="f-row"><label>নোট (ঐচ্ছিক)</label><input type="text" id="m-note" placeholder="কারণ"></div>
+    <div class="g2">
+      <button class="btn-submit btn-green" onclick="quickTxn('in')">+ যোগ</button>
+      <button class="btn-submit btn-red" onclick="quickTxn('out')">− বিয়োগ</button>
+    </div>
+    <div class="form-msg" id="modal-msg"></div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getDatabase, ref, set, get, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCYtxo5ezy4hlEwxoCC3SFgF_Km213Mt7U",
+  authDomain: "merit-stock.firebaseapp.com",
+  databaseURL: "https://merit-stock-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "merit-stock",
+  storageBucket: "merit-stock.firebasestorage.app",
+  messagingSenderId: "747691200869",
+  appId: "1:747691200869:web:0f9441364029dd40fad18c"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ---- STATE ----
+let currentUser = null;
+let items = {};
+let history = [];
+let modalItemId = null;
+
+// ডিফল্ট অ্যাডমিন
+const DEFAULT_ADMIN = { username: 'admin', password: 'merit@2024', role: 'admin', name: 'অ্যাডমিন' };
+
+// ---- INIT ----
+async function init() {
+  // সেশন চেক
+  const saved = sessionStorage.getItem('mc_user');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    showApp();
+  } else {
+    showLogin();
+  }
+}
+
+function showLogin() {
+  document.getElementById('loading-overlay').style.display = 'none';
+  document.getElementById('login-page').style.display = 'flex';
+  document.getElementById('main-app').style.display = 'none';
+}
+
+function showApp() {
+  document.getElementById('loading-overlay').style.display = 'none';
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  document.getElementById('user-label').textContent = currentUser.name || currentUser.username;
+  if (currentUser.role === 'admin') {
+    document.getElementById('admin-tab').style.display = 'flex';
+  }
+  loadData();
+}
+
+// ---- LOGIN ----
+window.doLogin = async function() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value.trim();
+  const err = document.getElementById('login-err');
+  err.style.display = 'none';
+
+  if (!u || !p) { err.style.display = 'block'; err.textContent = 'তথ্য পূরণ করুন।'; return; }
+
+  // ডিফল্ট অ্যাডমিন চেক
+  if (u === DEFAULT_ADMIN.username && p === DEFAULT_ADMIN.password) {
+    currentUser = { username: u, role: 'admin', name: 'অ্যাডমিন' };
+    sessionStorage.setItem('mc_user', JSON.stringify(currentUser));
+    showApp();
+    return;
+  }
+
+  // Firebase থেকে ব্যবহারকারী চেক
+  try {
+    const snap = await get(ref(db, 'users'));
+    if (snap.exists()) {
+      const users = snap.val();
+      for (const key in users) {
+        const usr = users[key];
+        if (usr.username === u && usr.password === p) {
+          currentUser = { ...usr, uid: key };
+          sessionStorage.setItem('mc_user', JSON.stringify(currentUser));
+          showApp();
+          return;
+        }
+      }
+    }
+    err.style.display = 'block';
+  } catch(e) {
+    err.style.display = 'block'; err.textContent = 'সংযোগ সমস্যা!';
+  }
+};
+
+window.doLogout = function() {
+  sessionStorage.removeItem('mc_user');
+  currentUser = null;
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  showLogin();
+};
+
+// ---- DATA LOAD ----
+function loadData() {
+  // Real-time items listener
+  onValue(ref(db, 'items'), snap => {
+    items = snap.exists() ? snap.val() : {};
+    renderStock();
+    updateSelects();
+  });
+  // History (last 100)
+  onValue(ref(db, 'history'), snap => {
+    if (snap.exists()) {
+      const raw = snap.val();
+      history = Object.entries(raw).map(([k,v]) => ({id:k,...v}))
+        .sort((a,b) => (b.ts||0) - (a.ts||0)).slice(0,100);
+    } else { history = []; }
+    renderHistory();
+  });
+}
+
+// ---- RENDER STOCK ----
+window.renderStock = function() {
+  const q = (document.getElementById('search-inp')?.value || '').toLowerCase();
+  const list = Object.entries(items)
+    .filter(([,v]) => v.name.toLowerCase().includes(q))
+    .sort((a,b) => a[1].name.localeCompare(b[1].name, 'bn'));
+
+  const total = Object.keys(items).length;
+  const low = Object.values(items).filter(v => v.qty > 0 && v.qty <= (v.min||5)).length;
+  const out = Object.values(items).filter(v => v.qty === 0).length;
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-low').textContent = low;
+  document.getElementById('s-out').textContent = out;
+
+  const el = document.getElementById('stock-list');
+  if (!list.length) {
+    el.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v9a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zM16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg><p>কোনো আইটেম পাওয়া যায়নি</p></div>`;
+    return;
+  }
+  el.innerHTML = list.map(([id, item]) => {
+    const s = item.qty === 0 ? 'b-out' : item.qty <= (item.min||5) ? 'b-low' : 'b-ok';
+    const st = item.qty === 0 ? 'শেষ' : item.qty <= (item.min||5) ? 'কম স্টক' : 'ঠিক আছে';
+    const delBtn = currentUser?.role === 'admin' ? `<button class="act-btn act-del" onclick="delItem('${id}')">🗑</button>` : '';
+    return `<div class="item-card">
+      <div class="item-icon"><svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v9a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zM16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg></div>
+      <div class="item-info">
+        <div class="item-name">${item.name}</div>
+        <div class="item-sub">সর্বনিম্ন: ${item.min||5} ${item.unit||'পিস'}</div>
+        <span class="badge ${s}">${st}</span>
+        <div class="item-actions">
+          <button class="act-btn act-in" onclick="openModal('${id}','in')">+ যোগ</button>
+          <button class="act-btn act-out" onclick="openModal('${id}','out')">− বিয়োগ</button>
+          ${delBtn}
+        </div>
+      </div>
+      <div class="item-qty">
+        <div class="qty-num" style="color:${item.qty===0?'#c0392b':item.qty<=(item.min||5)?'#e67e22':'#1a7a1a'}">${item.qty}</div>
+        <div class="qty-unit">${item.unit||'পিস'}</div>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+// ---- RENDER HISTORY ----
+window.renderHistory = function() {
+  const el = document.getElementById('history-list');
+  if (!history.length) {
+    el.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><p>কোনো ইতিহাস নেই</p></div>`;
+    return;
+  }
+  el.innerHTML = history.map(h => {
+    const d = h.ts ? new Date(h.ts).toLocaleString('bn-BD') : h.date || '';
+    return `<div class="hist-item">
+      <div class="hi-row">
+        <span class="hi-name">${h.name}</span>
+        <span class="hi-badge ${h.type==='in'?'hi-in':'hi-out'}">${h.type==='in'?'+ যোগ':'− বিয়োগ'} ${h.qty} ${h.unit}</span>
+      </div>
+      <div class="hi-meta">${d}${h.by?' • '+h.by:''}</div>
+      ${h.note?`<div class="hi-note">${h.note}</div>`:''}
+    </div>`;
+  }).join('');
+};
+
+// ---- UPDATE SELECTS ----
+function updateSelects() {
+  const sel = document.getElementById('sel-item');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- নির্বাচন করুন --</option>' +
+    Object.entries(items).sort((a,b)=>a[1].name.localeCompare(b[1].name,'bn'))
+      .map(([id,v])=>`<option value="${id}">${v.name} (${v.qty} ${v.unit||'পিস'})</option>`).join('') +
+    '<option value="__new__">+ নতুন আইটেম তৈরি করুন</option>';
+  if (cur) sel.value = cur;
+}
+
+// ---- ITEM SELECT ----
+window.onItemSelect = function() {
+  const v = document.getElementById('sel-item').value;
+  document.getElementById('new-name-row').style.display = v === '__new__' ? 'block' : 'none';
+  if (v && v !== '__new__' && items[v]) {
+    document.getElementById('txn-unit').value = items[v].unit || 'পিস';
+    document.getElementById('txn-min').value = items[v].min || 5;
+  }
+};
+
+// ---- TRANSACTION ----
+window.doTxn = async function(type) {
+  const selVal = document.getElementById('sel-item').value;
+  const qty = parseInt(document.getElementById('txn-qty').value) || 0;
+  const unit = document.getElementById('txn-unit').value;
+  const note = document.getElementById('txn-note').value.trim();
+  const min = parseInt(document.getElementById('txn-min').value) || 5;
+  const msg = document.getElementById('txn-msg');
+
+  if (!selVal) { showMsg(msg,'আইটেম নির্বাচন করুন।','red'); return; }
+  if (qty <= 0) { showMsg(msg,'পরিমাণ দিন।','red'); return; }
+
+  let itemId = selVal, itemName = '';
+
+  if (selVal === '__new__') {
+    const nn = document.getElementById('new-name').value.trim();
+    if (!nn) { showMsg(msg,'নামটি দিন।','red'); return; }
+    if (type === 'out') { showMsg(msg,'নতুন আইটেম আগে যোগ করুন।','red'); return; }
+    const newRef = push(ref(db,'items'));
+    itemId = newRef.key;
+    itemName = nn;
+    await set(newRef, { name:nn, qty, unit, min, createdAt: Date.now() });
+  } else {
+    const item = items[selVal];
+    if (!item) return;
+    itemName = item.name;
+    if (type === 'out' && item.qty < qty) { showMsg(msg,'পর্যাপ্ত স্টক নেই!','red'); return; }
+    const newQty = item.qty + (type === 'in' ? qty : -qty);
+    await update(ref(db,`items/${selVal}`), { qty:newQty, unit, min });
+  }
+
+  await push(ref(db,'history'), {
+    itemId, name:itemName, type, qty, unit,
+    note, by: currentUser?.name || currentUser?.username,
+    ts: Date.now(),
+    date: new Date().toLocaleString('bn-BD')
+  });
+
+  showMsg(msg, type==='in'?'✓ স্টক যোগ হয়েছে!':'✓ স্টক বিয়োগ হয়েছে!','green');
+  document.getElementById('txn-qty').value = '';
+  document.getElementById('txn-note').value = '';
+  document.getElementById('sel-item').value = '';
+  document.getElementById('new-name-row').style.display = 'none';
+};
+
+// ---- DELETE ITEM ----
+window.delItem = async function(id) {
+  if (!confirm('এই আইটেম ও এর সব ইতিহাস মুছে ফেলবেন?')) return;
+  await remove(ref(db,`items/${id}`));
+};
+
+// ---- QUICK MODAL ----
+window.openModal = function(id, defaultType) {
+  modalItemId = id;
+  const item = items[id];
+  document.getElementById('modal-title').textContent = item ? item.name : 'দ্রুত যোগ/বিয়োগ';
+  document.getElementById('m-qty').value = '';
+  document.getElementById('m-note').value = '';
+  document.getElementById('modal-msg').textContent = '';
+  document.getElementById('quick-modal').classList.add('open');
+};
+
+window.closeModal = function() {
+  document.getElementById('quick-modal').classList.remove('open');
+  modalItemId = null;
+};
+
+window.quickTxn = async function(type) {
+  const qty = parseInt(document.getElementById('m-qty').value) || 0;
+  const note = document.getElementById('m-note').value.trim();
+  const msg = document.getElementById('modal-msg');
+
+  if (!modalItemId) return;
+  if (qty <= 0) { showMsg(msg,'পরিমাণ দিন।','red'); return; }
+
+  const item = items[modalItemId];
+  if (!item) return;
+  if (type === 'out' && item.qty < qty) { showMsg(msg,'পর্যাপ্ত স্টক নেই!','red'); return; }
+
+  const newQty = item.qty + (type === 'in' ? qty : -qty);
+  await update(ref(db,`items/${modalItemId}`), { qty: newQty });
+  await push(ref(db,'history'), {
+    itemId: modalItemId, name: item.name, type, qty, unit: item.unit || 'পিস',
+    note, by: currentUser?.name || currentUser?.username,
+    ts: Date.now(), date: new Date().toLocaleString('bn-BD')
+  });
+
+  closeModal();
+};
+
+// ---- ADD USER (Admin) ----
+window.addUser = async function() {
+  const u = document.getElementById('new-user-name').value.trim();
+  const p = document.getElementById('new-user-pass').value.trim();
+  const r = document.getElementById('new-user-role').value;
+  const msg = document.getElementById('user-msg');
+  if (!u || !p) { showMsg(msg,'সব তথ্য দিন।','red'); return; }
+  await push(ref(db,'users'), { username:u, password:p, role:r, name:u });
+  showMsg(msg,'ব্যবহারকারী যোগ হয়েছে!','green');
+  document.getElementById('new-user-name').value = '';
+  document.getElementById('new-user-pass').value = '';
+  loadUserList();
+};
+
+async function loadUserList() {
+  const el = document.getElementById('user-list-content');
+  const snap = await get(ref(db,'users'));
+  if (!snap.exists()) { el.innerHTML = '<p style="color:#999;font-size:13px">কোনো ব্যবহারকারী নেই</p>'; return; }
+  const users = snap.val();
+  el.innerHTML = Object.entries(users).map(([k,v])=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #eee;font-size:13px">
+      <div><strong>${v.username}</strong> <span style="color:#999">(${v.role==='admin'?'অ্যাডমিন':'সাধারণ'})</span></div>
+      <button onclick="removeUser('${k}')" style="background:#fdecea;color:#c0392b;border:none;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer">মুছুন</button>
+    </div>
+  `).join('');
+}
+
+window.removeUser = async function(id) {
+  if (!confirm('এই ব্যবহারকারী মুছে ফেলবেন?')) return;
+  await remove(ref(db,`users/${id}`));
+  loadUserList();
+};
+
+// ---- TAB SWITCH ----
+window.switchTab = function(tab, btn) {
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pane-'+tab).classList.add('active');
+  btn.classList.add('active');
+  if (tab === 'add') updateSelects();
+  if (tab === 'settings' && currentUser?.role === 'admin') loadUserList();
+};
+
+// ---- HELPERS ----
+function showMsg(el, txt, color) {
+  el.textContent = txt;
+  el.style.color = color === 'red' ? '#c0392b' : '#1a7a1a';
+  setTimeout(() => el.textContent = '', 3000);
+}
+
+// ---- START ----
+init();
+</script>
+</body>
+</html>
